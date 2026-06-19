@@ -391,7 +391,7 @@
    CONFIGURAÇÃO — cole entre as aspas o link do seu Google Apps Script
    (passo a passo no arquivo COMO-USAR.md). Vazio = MODO TESTE.
    ==================================================================== */
-const ENDPOINT = "";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycby98odfAykhm1W_fF161rPj6IobDP7ZqqtjvIJEmSpKw-6Sl0gtkMFcUG2mN7wJJul4wg/exec";
 
 const ORIGEM = "Campanha Copa da Saúde";
 const STORAGE_KEY = "copa_saude_respostas";
@@ -483,6 +483,9 @@ function coletar(){
   });
   o.indicacoes_validas=inds;
   o.numero_extra=inds>=3?"Sim":"Não";
+  // garante presença das colunas de consentimento em toda resposta
+  o.lgpd=document.querySelector('input[name=lgpd]').checked?"Sim":"Não";
+  o.novidades=document.querySelector('input[name=novidades]').checked?"Sim":"Não";
   o.origem=ORIGEM;
   o.data_envio=new Date().toLocaleString('pt-BR');
   return o;
