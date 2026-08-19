@@ -674,6 +674,17 @@ const Blues = (() => {
         }).catch(()=>{});
       }catch(e){}
     }
+
+    // armazém central (Google Sheets). text/plain evita o preflight CORS.
+    if(CFG.storeUrl){
+      try{
+        fetch(CFG.storeUrl, {
+          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'create', key: CFG.storeWriteKey||'', lead: lead }),
+          keepalive:true
+        }).catch(()=>{});
+      }catch(e){}
+    }
     return lead;
   }
 

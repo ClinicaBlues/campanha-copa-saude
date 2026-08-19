@@ -20,6 +20,12 @@ window.BLUES_CONFIG = {
   // Ex.: "https://hook.us1.make.com/xxxxxxxxxxxxxxxx"
   webhookUrl: "",
 
+  // ARMAZÉM CENTRAL (Google Sheets via Apps Script). Cole aqui a URL /exec.
+  // Enquanto vazio, o site funciona normal e o painel usa só o navegador.
+  storeUrl: "",
+  // Chave pública de escrita (deve ser igual ao WRITE_KEY do Code.gs).
+  storeWriteKey: "blues-site-2026",
+
   // Link da Política de Privacidade (LGPD).
   privacyUrl: "https://www.clinicablues.com.br/politica-de-privacidade",
 
