@@ -415,14 +415,29 @@ const Blues = (() => {
       term:     p.get('utm_term')     || ""
     };
   }
+  let STORE_PARTNERS = null;
   function effectivePartners(){
-    // Se o painel (admin.html) tiver uma lista de parceiros salva neste navegador,
-    // ela é usada aqui também. Para valer para todos os clientes, publique o config.js.
-    try{
-      const ov = JSON.parse(localStorage.getItem('blues_partners')||'null');
-      if(Array.isArray(ov) && ov.length) return ov;
-    }catch(e){}
+    if(Array.isArray(STORE_PARTNERS) && STORE_PARTNERS.length) return STORE_PARTNERS;
     return CFG.partners || [];
+  }
+  // Lê os cupons do armazém central (assim, cupom criado no painel vale aqui na hora).
+  function fetchStorePartners(){
+    if(!CFG.storeUrl) return;
+    const name = '__bluesP_' + Math.random().toString(36).slice(2,9);
+    const clean = () => { try{ delete window[name]; }catch(e){} const s=document.getElementById(name); if(s) s.remove(); };
+    const timer = setTimeout(clean, 12000);
+    window[name] = (resp) => {
+      clearTimeout(timer); clean();
+      if(resp && resp.ok && Array.isArray(resp.partners) && resp.partners.length){
+        STORE_PARTNERS = resp.partners;
+        if(!state.couponValid) detectPresetCoupon(); // re-tenta o cupom do link com a lista atualizada
+      }
+    };
+    const s = document.createElement('script');
+    s.id = name;
+    s.src = CFG.storeUrl + (CFG.storeUrl.indexOf('?')>=0?'&':'?')
+      + 'action=partners&key=' + encodeURIComponent(CFG.storeWriteKey||'') + '&callback=' + name + '&t=' + Date.now();
+    document.body.appendChild(s);
   }
   function findPartner(code){
     if(!code) return null;
@@ -719,7 +734,8 @@ const Blues = (() => {
   function init(){
     renderInterest();
     initForm();
-    detectPresetCoupon();
+    fetchStorePartners();   // busca cupons atualizados do armazém (assíncrono)
+    detectPresetCoupon();   // já tenta com o config; re-tenta quando o armazém responder
     updateChrome('hero');
   }
   document.addEventListener('DOMContentLoaded', init);

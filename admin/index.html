@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clínica Blues — Painel de Parceiros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0e2b4b; --navy-deep:#081d36; --gold:#bf9a54; --gold-soft:#d8bd86;
+  --cream:#fbf9f6; --ink:#0e2b4b; --body:#3a4658; --muted:#8a93a1;
+  --line:#e7e1d5; --card:#ffffff; --ok:#2f8f5b; --err:#c0563f; --warn:#c98a1e;
+  --shadow:0 14px 40px -20px rgba(14,43,75,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Figtree',sans-serif;color:var(--body);background:var(--cream);line-height:1.5}
+h1,h2,h3,.display{font-family:'Poppins',sans-serif;letter-spacing:-.3px}
+a{color:var(--navy)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* header */
+header{background:radial-gradient(120% 100% at 20% 0%,#16355a,var(--navy) 60%,var(--navy-deep));color:#fff}
+.head-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:center;gap:10px}
+.logo .cross{width:28px;height:28px}
+.logo .wm{display:flex;flex-direction:column;line-height:1}
+.logo .wm b{font-family:'Poppins';font-weight:700;font-size:21px;color:#fff}
+.logo .wm span{font-family:'Poppins';font-weight:600;font-size:8px;letter-spacing:5px;color:var(--gold);text-align:right;margin-top:2px}
+.head-title{font-family:'Poppins';font-weight:600;font-size:12px;letter-spacing:3px;color:var(--gold);margin-top:6px}
+.head-tools{display:flex;gap:9px;flex-wrap:wrap}
+.btn{font-family:'Poppins';font-weight:600;font-size:13px;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;transition:transform .12s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#3a2c10}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-sm{font-size:12px;padding:7px 12px;border-radius:8px}
+
+/* filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0}
+.chip{font-family:'Poppins';font-weight:600;font-size:12.5px;padding:9px 15px;border-radius:100px;
+  border:1.5px solid var(--line);background:var(--card);color:var(--body);cursor:pointer;transition:all .15s}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.filters input[type=date]{font-family:'Figtree';font-size:13px;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;color:var(--ink)}
+
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:8px}
+.stat{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:14px;padding:18px 18px}
+.stat .lbl{font-family:'Poppins';font-weight:600;font-size:10.5px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.stat .val{font-family:'Poppins';font-weight:800;font-size:30px;color:var(--navy);line-height:1}
+.stat .sub{font-size:12px;color:var(--muted);margin-top:5px}
+
+section{margin:34px 0}
+.sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
+.sec-h h2{font-family:'Poppins';font-weight:700;font-size:20px;color:var(--navy)}
+.sec-h h2 .g{color:var(--gold)}
+.sec-h .note{font-size:12.5px;color:var(--muted)}
+
+/* table */
+.tablewrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+th{font-family:'Poppins';font-weight:600;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);
+  text-align:left;padding:14px 16px;border-bottom:1.5px solid var(--line);white-space:nowrap;background:#faf7f1}
+td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#faf8f3}
+.partner-name{font-family:'Poppins';font-weight:700;color:var(--navy);font-size:14px}
+.partner-coupon{font-size:11.5px;color:var(--gold);font-family:'Poppins';font-weight:600;letter-spacing:.5px}
+.num{font-family:'Poppins';font-weight:700;color:var(--navy)}
+.pct{display:inline-block;font-family:'Poppins';font-weight:700;font-size:12px;padding:3px 9px;border-radius:7px;background:#eef7f0;color:var(--ok)}
+.pct.low{background:#fbeeec;color:var(--err)}
+.pct.mid{background:#fbf4e6;color:var(--warn)}
+.rank-num{font-family:'Poppins';font-weight:800;color:var(--gold);font-size:16px;width:26px;display:inline-block}
+.money{font-family:'Poppins';font-weight:700;color:var(--navy)}
+
+/* ranking two-col */
+.rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.rank-grid{grid-template-columns:1fr}}
+
+/* funnel */
+.funnel{display:flex;flex-direction:column;gap:7px}
+.fstage{display:flex;align-items:center;gap:14px}
+.fbar{height:34px;border-radius:8px;background:linear-gradient(90deg,var(--navy),#1d4470);
+  display:flex;align-items:center;padding:0 14px;color:#fff;font-family:'Poppins';font-weight:700;font-size:13px;min-width:44px;transition:width .5s}
+.fstage .fl{width:170px;flex:none;font-size:12.5px;color:var(--body);font-weight:500}
+.fstage .fc{font-family:'Poppins';font-weight:700;color:var(--navy);font-size:14px;width:40px;text-align:right}
+
+/* leads table status select */
+select.status{font-family:'Figtree';font-size:12px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;color:var(--ink);background:#fff}
+.badge{display:inline-block;font-size:11px;font-family:'Poppins';font-weight:600;padding:3px 8px;border-radius:6px}
+.badge.dup{background:#fbeeec;color:var(--err)}
+.badge.cpn{background:#fbf4e6;color:var(--warn)}
+.badge.novalid{background:#eef2f6;color:var(--muted)}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty h3{font-family:'Poppins';color:var(--navy);margin-bottom:8px}
+.leadname{font-weight:600;color:var(--navy)}
+.small{font-size:12px;color:var(--muted)}
+footer{padding:40px 0;text-align:center;color:var(--muted);font-size:12px}
+.tabbtns{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tabbtns .chip.active{background:var(--gold);border-color:var(--gold);color:#3a2c10}
+.hidden{display:none}
+
+/* partner manager */
+.btn-ghost-dark{background:transparent;border:1.5px solid var(--line);color:var(--body)}
+.partner-form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px}
+.pf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:720px){.pf-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.pf-grid{grid-template-columns:1fr}}
+.pf-field{display:flex;flex-direction:column}
+.pf-field.pf-2{grid-column:span 2}
+@media(max-width:480px){.pf-field.pf-2{grid-column:auto}}
+.pf-field label{font-family:'Poppins';font-weight:600;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.pf-field input,.pf-field select{font-family:'Figtree';font-size:14.5px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px}
+.pf-field input:focus,.pf-field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(191,154,84,.14)}
+.pf-actions{display:flex;gap:10px;margin-top:16px}
+.publish-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:#faf4e8;border:1px solid #e9dcbf;border-radius:12px;padding:14px 18px;margin-bottom:16px}
+.pub-txt{font-size:13px;color:var(--body);max-width:560px;line-height:1.5}
+.pub-txt code{background:#fff;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12px}
+.pub-actions{display:flex;gap:9px;flex-wrap:wrap}
+.pm-link{display:flex;gap:6px;align-items:center}
+.pm-link input{font-family:'Figtree';font-size:12px;color:var(--body);background:#faf8f3;border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:210px}
+.pm-copy{font-family:'Poppins';font-weight:600;font-size:11px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer;white-space:nowrap}
+.pm-act{font-family:'Poppins';font-weight:600;font-size:11.5px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;margin-left:5px}
+.pm-act.del{color:var(--err);border-color:#f0cec4}
+.st-badge{display:inline-block;font-family:'Poppins';font-weight:600;font-size:11px;padding:4px 10px;border-radius:100px}
+.st-badge.on{background:#eef7f0;color:var(--ok)}
+.st-badge.off{background:#f0eef0;color:var(--muted)}
+
+/* login gate */
+#loginGate{display:none}
+body.locked{overflow:hidden}
+body.locked #loginGate{display:flex}
+body.locked > header, body.locked > .wrap, body.locked > footer{display:none}
+#loginGate{position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:22px;
+  background:radial-gradient(125% 90% at 50% 0%,#16355a 0%,var(--navy) 50%,var(--navy-deep) 100%)}
+.login-card{width:100%;max-width:380px;background:var(--card);border-radius:18px;padding:34px 30px;
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.6);text-align:center}
+.login-card .logo{justify-content:center;margin-bottom:20px}
+.login-card .logo .wm b{color:var(--navy)}
+.login-title{font-family:'Poppins';font-weight:800;font-size:22px;color:var(--navy);margin-bottom:6px}
+.login-sub{font-size:13.5px;color:var(--muted);margin-bottom:22px}
+.login-card label{display:block;text-align:left;font-family:'Poppins';font-weight:600;font-size:10.5px;
+  letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:14px 0 7px}
+.login-card input{width:100%;font-family:'Figtree';font-size:15px;color:var(--ink);background:#fff;
+  border:1.5px solid var(--line);border-radius:11px;padding:13px 13px}
+.login-card input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(191,154,84,.14)}
+.login-card .btn{width:100%;margin-top:22px;padding:14px;font-size:15px}
+.login-err{background:#fdf0ec;border:1px solid #f3cabb;color:var(--err);font-size:13px;
+  border-radius:10px;padding:11px;margin-bottom:6px}
+.login-foot{font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.5}
+</style>
+</head>
+<body class="locked">
+
+<!-- Login gate -->
+<div id="loginGate">
+  <div class="login-card">
+    <div class="logo">
+      <svg class="cross" viewBox="0 0 34 34"><path d="M13 2h8a2 2 0 0 1 2 2v7h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7v7a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-7H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h7V4a2 2 0 0 1 2-2z" fill="#bf9a54"/></svg>
+      <div class="wm"><b>Blues</b><span>CLÍNICA</span></div>
+    </div>
+    <div class="login-title">Painel restrito</div>
+    <p class="login-sub">Acesso exclusivo da equipe Clínica Blues.</p>
+    <div class="login-err" id="loginErr" style="display:none">E-mail ou senha incorretos.</div>
+    <label for="lgEmail">E-mail</label>
+    <input id="lgEmail" type="email" autocomplete="username" placeholder="contato@clinicablues.com.br" onkeydown="if(event.key==='Enter')Admin.login()">
+    <label for="lgPass">Senha</label>
+    <input id="lgPass" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')Admin.login()">
+    <button class="btn btn-gold" onclick="Admin.login()">Entrar</button>
+    <p class="login-foot">🔒 Esta página contém dados de pacientes. Não compartilhe o acesso.</p>
+  </div>
+</div>
+
+<header>
+  <div class="wrap head-inner">
+    <div>
+      <div class="logo">
+        <svg class="cross" viewBox="0 0 34 34"><path d="M13 2h8a2 2 0 0 1 2 2v7h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7v7a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-7H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h7V4a2 2 0 0 1 2-2z" fill="#bf9a54"/></svg>
+        <div class="wm"><b>Blues</b><span>CLÍNICA</span></div>
+      </div>
+      <div class="head-title">PAINEL DO PROGRAMA DE INDICAÇÃO</div>
+      <div id="storeStatus" style="font-size:11.5px;color:rgba(255,255,255,.6);margin-top:5px"></div>
+    </div>
+    <div class="head-tools">
+      <button class="btn btn-ghost" onclick="Admin.syncStore()">↻ Atualizar</button>
+      <button class="btn btn-ghost" onclick="Admin.importJSON()">Importar leads</button>
+      <button class="btn btn-ghost" onclick="Admin.loadDemo()">Dados de exemplo</button>
+      <button class="btn btn-gold" onclick="Admin.exportCSV()">Exportar CSV</button>
+      <button class="btn btn-ghost" onclick="Admin.logout()">Sair</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Filters -->
+  <div class="filters" id="filters">
+    <button class="chip" data-range="today">Hoje</button>
+    <button class="chip" data-range="7">7 dias</button>
+    <button class="chip active" data-range="30">30 dias</button>
+    <button class="chip" data-range="month">Este mês</button>
+    <button class="chip" data-range="all">Tudo</button>
+    <span style="width:12px"></span>
+    <input type="date" id="dFrom" title="De"> <input type="date" id="dTo" title="Até">
+    <button class="btn btn-navy btn-sm" onclick="Admin.customRange()">Aplicar período</button>
+  </div>
+
+  <!-- Overview -->
+  <section>
+    <div class="stats" id="overview"></div>
+  </section>
+
+  <!-- Tab switch -->
+  <div class="tabbtns">
+    <button class="chip active" data-tab="partners" onclick="Admin.tab('partners')">Relatório por parceiro</button>
+    <button class="chip" data-tab="funnel" onclick="Admin.tab('funnel')">Funil</button>
+    <button class="chip" data-tab="ranking" onclick="Admin.tab('ranking')">Ranking</button>
+    <button class="chip" data-tab="leads" onclick="Admin.tab('leads')">Leads</button>
+    <button class="chip" data-tab="parceiros" onclick="Admin.tab('parceiros')">⚙️ Gerenciar parceiros</button>
+  </div>
+
+  <!-- Partners -->
+  <section id="tab-partners">
+    <div class="sec-h"><h2>Relatório por <span class="g">parceiro</span></h2><span class="note">Volume e conversão de cada indicação</span></div>
+    <div class="tablewrap scroll">
+      <table>
+        <thead><tr>
+          <th>Parceiro</th><th>Leads</th><th>Agendadas</th><th>Realizadas</th>
+          <th>Lead → Agend.</th><th>Lead → Consulta</th><th>Desconto pac.</th><th>Comissão parc.</th>
+        </tr></thead>
+        <tbody id="partnersBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Funnel -->
+  <section id="tab-funnel" class="hidden">
+    <div class="sec-h"><h2>Funil de <span class="g">conversão</span></h2><span class="note">Do lead ao tratamento fechado</span></div>
+    <div class="tablewrap" style="padding:24px">
+      <div class="funnel" id="funnel"></div>
+    </div>
+  </section>
+
+  <!-- Ranking -->
+  <section id="tab-ranking" class="hidden">
+    <div class="rank-grid">
+      <div>
+        <div class="sec-h"><h2>Mais <span class="g">oportunidades</span></h2></div>
+        <div class="tablewrap scroll"><table><thead><tr><th>#</th><th>Parceiro</th><th>Leads</th></tr></thead><tbody id="rankLeads"></tbody></table></div>
+      </div>
+      <div>
+        <div class="sec-h"><h2>Mais <span class="g">consultas</span></h2></div>
+        <div class="tablewrap scroll"><table><thead><tr><th>#</th><th>Parceiro</th><th>Realizadas</th></tr></thead><tbody id="rankConsults"></tbody></table></div>
+      </div>
+    </div>
+    <p class="small" style="margin-top:14px">Volume de lead sozinho não conta a história toda — acompanhe quem envia leads que <b>convertem</b>.</p>
+  </section>
+
+  <!-- Leads -->
+  <section id="tab-leads" class="hidden">
+    <div class="sec-h"><h2>Leads <span class="g">recebidos</span></h2><span class="note">Atualize o status de cada lead conforme avança no atendimento</span></div>
+
+    <div style="margin-bottom:14px">
+      <button class="btn btn-navy btn-sm" onclick="Admin.toggleLeadForm()">＋ Adicionar lead manualmente</button>
+    </div>
+    <div class="partner-form" id="leadForm" style="display:none;margin-bottom:16px">
+      <div class="pf-grid">
+        <div class="pf-field pf-2"><label>Nome</label><input id="lfName" placeholder="Nome do paciente"></div>
+        <div class="pf-field"><label>WhatsApp</label><input id="lfPhone" placeholder="(31) 99999-9999"></div>
+        <div class="pf-field pf-2"><label>Interesse</label><input id="lfInterest" placeholder="Ex: Cabelo e couro cabeludo"></div>
+        <div class="pf-field"><label>Cupom / Parceiro</label><select id="lfCoupon"></select></div>
+        <div class="pf-field"><label>Status</label><select id="lfStatus"></select></div>
+      </div>
+      <div class="pf-actions">
+        <button class="btn btn-gold" onclick="Admin.saveManualLead()">Salvar lead</button>
+        <button class="btn btn-ghost-dark" onclick="Admin.toggleLeadForm()">Cancelar</button>
+      </div>
+    </div>
+
+    <div class="tablewrap scroll">
+      <table>
+        <thead><tr><th>Data</th><th>Nome</th><th>WhatsApp</th><th>Interesse</th><th>Cupom / Parceiro</th><th>Status</th><th>Sinais</th></tr></thead>
+        <tbody id="leadsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Parceiros (gerenciar) -->
+  <section id="tab-parceiros" class="hidden">
+    <div class="sec-h"><h2>Gerenciar <span class="g">parceiros</span></h2><span class="note">Adicione parceiros e defina cupom, desconto e comissão de cada um</span></div>
+
+    <div class="partner-form" id="partnerForm">
+      <input type="hidden" id="pEditIndex" value="-1">
+      <div class="pf-grid">
+        <div class="pf-field pf-2"><label>Nome do parceiro</label><input id="pName" placeholder="Ex: Salão da Carla"></div>
+        <div class="pf-field"><label>Cupom</label><input id="pCoupon" placeholder="EX: CARLA50" style="text-transform:uppercase"></div>
+        <div class="pf-field"><label>Link curto (opcional)</label><input id="pSlug" placeholder="carla"></div>
+        <div class="pf-field"><label>Desconto ao cliente (R$)</label><input id="pBenefit" type="number" min="0" placeholder="50"></div>
+        <div class="pf-field"><label>Comissão ao parceiro (R$)</label><input id="pCommission" type="number" min="0" placeholder="100"></div>
+        <div class="pf-field"><label>Status</label>
+          <select id="pStatus"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select>
+        </div>
+      </div>
+      <div class="pf-actions">
+        <button class="btn btn-gold" onclick="Admin.savePartner()" id="pSaveBtn">Adicionar parceiro</button>
+        <button class="btn btn-ghost-dark" onclick="Admin.clearPartnerForm()" id="pCancelBtn" style="display:none">Cancelar edição</button>
+      </div>
+    </div>
+
+    <div class="publish-bar">
+      <div class="pub-txt"><b>Para valer para os clientes:</b> depois de mexer nos parceiros, baixe o <code>config.js</code> e substitua o arquivo na hospedagem. As mudanças já funcionam agora <b>neste computador</b> para testar.</div>
+      <div class="pub-actions">
+        <button class="btn btn-navy" onclick="Admin.exportConfig()">⬇️ Baixar config.js para publicar</button>
+        <button class="btn btn-ghost-dark" onclick="Admin.resetPartners()">Restaurar padrão</button>
+      </div>
+    </div>
+
+    <div class="tablewrap scroll">
+      <table>
+        <thead><tr><th>Parceiro</th><th>Cupom</th><th>Desconto</th><th>Comissão</th><th>Status</th><th>Link do parceiro</th><th></th></tr></thead>
+        <tbody id="pmBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer>Clínica Blues · Painel de Parceiros · dados armazenados neste navegador (localStorage) — para consolidar entre dispositivos, conecte um webhook/CRM.</footer>
+
+<script src="config.js"></script>
+<script>
+const Admin = (() => {
+  const CFG = window.BLUES_CONFIG || {};
+  const $ = s => document.querySelector(s);
+  const STATUSES = ["NOVO LEAD","CONTATO REALIZADO","CONVERSA INICIADA","AGENDAMENTO","CONSULTA CONFIRMADA","CONSULTA REALIZADA","TRATAMENTO PROPOSTO","TRATAMENTO FECHADO","PERDIDO"];
+  const SCHEDULED = new Set(["AGENDAMENTO","CONSULTA CONFIRMADA","CONSULTA REALIZADA","TRATAMENTO PROPOSTO","TRATAMENTO FECHADO"]);
+  const DONE = new Set(["CONSULTA REALIZADA","TRATAMENTO PROPOSTO","TRATAMENTO FECHADO"]);
+  const COMMISSION = CFG.partnerCommission || 100; // pago só quando a consulta é REALIZADA
+
+  let range = {mode:'30', from:null, to:null};
+
+  function allLeads(){ return JSON.parse(localStorage.getItem('blues_leads')||'[]'); }
+  function saveLeads(l){ localStorage.setItem('blues_leads', JSON.stringify(l)); }
+
+  // ---- Parceiros (lista de trabalho salva neste navegador; publique via config.js) ----
+  function effectivePartners(){
+    try{
+      const ov = JSON.parse(localStorage.getItem('blues_partners')||'null');
+      if(Array.isArray(ov) && ov.length) return ov;
+    }catch(e){}
+    return (CFG.partners||[]).map(p=>({...p}));
+  }
+  function savePartners(list){ localStorage.setItem('blues_partners', JSON.stringify(list)); }
+  function benefitOf(p){ return (p && p.benefit != null && p.benefit !== '') ? +p.benefit : (CFG.defaultBenefit||50); }
+  function commissionOf(p){ return (p && p.commission != null && p.commission !== '') ? +p.commission : (CFG.partnerCommission||100); }
+  function partnerByCoupon(c){ if(!c) return null; return effectivePartners().find(p=>(p.coupon||'').toUpperCase()===String(c).toUpperCase())||null; }
+  function leadCommission(l){
+    if(!l.couponValid) return 0;
+    if(l.commissionValue != null && l.commissionValue !== '') return +l.commissionValue;
+    const p = partnerByCoupon(l.coupon);
+    return p ? commissionOf(p) : COMMISSION;
+  }
+
+  // ---- Armazém central (Google Sheets via Apps Script) ----
+  function storeKey(){ return sessionStorage.getItem('blues_store_key') || ''; }
+  function bool_(v){ return v===true||v==='true'||v==='TRUE'||v===1||v==='1'; }
+  function normalizeLead_(o){
+    return Object.assign({}, o, {
+      phone: String(o.phone==null?'':o.phone),
+      phoneDigits: String(o.phoneDigits==null?'':o.phoneDigits),
+      couponValid: bool_(o.couponValid),
+      duplicateFlag: bool_(o.duplicateFlag),
+      benefitValue: (o.benefitValue===''||o.benefitValue==null)?0:+o.benefitValue,
+      commissionValue: (o.commissionValue===''||o.commissionValue==null)?null:+o.commissionValue,
+      createdAt: o.createdAt ? String(o.createdAt) : new Date().toISOString()
+    });
+  }
+  function storeList(cb){
+    if(!CFG.storeUrl){ cb && cb(false); return; }
+    const name = '__bluesStore_' + Math.random().toString(36).slice(2,9);
+    const clean = () => { try{ delete window[name]; }catch(e){} const s=document.getElementById(name); if(s) s.remove(); };
+    const timer = setTimeout(()=>{ clean(); cb && cb(false,'timeout'); }, 12000);
+    window[name] = (resp) => {
+      clearTimeout(timer); clean();
+      if(resp && resp.ok && Array.isArray(resp.leads)){ saveLeads(resp.leads.map(normalizeLead_)); cb && cb(true); }
+      else { cb && cb(false, (resp && resp.error) || 'erro'); }
+    };
+    const s = document.createElement('script');
+    s.id = name;
+    s.src = CFG.storeUrl + (CFG.storeUrl.indexOf('?')>=0?'&':'?')
+      + 'action=list&key=' + encodeURIComponent(storeKey()) + '&callback=' + name + '&t=' + Date.now();
+    s.onerror = () => { clearTimeout(timer); clean(); cb && cb(false,'rede'); };
+    document.body.appendChild(s);
+  }
+  function storePush(lead){
+    if(!CFG.storeUrl) return;
+    try{
+      fetch(CFG.storeUrl, {
+        method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ action:'upsert', key: storeKey(), lead: lead }), keepalive:true
+      }).catch(()=>{});
+    }catch(e){}
+  }
+  function storePartnersList(cb){
+    if(!CFG.storeUrl){ cb && cb('error'); return; }
+    const name = '__bluesPP_' + Math.random().toString(36).slice(2,9);
+    const clean = () => { try{ delete window[name]; }catch(e){} const s=document.getElementById(name); if(s) s.remove(); };
+    const timer = setTimeout(()=>{ clean(); cb && cb('error'); }, 12000);
+    window[name] = (resp) => {
+      clearTimeout(timer); clean();
+      if(resp && resp.ok && Array.isArray(resp.partners)){
+        if(resp.partners.length){ localStorage.setItem('blues_partners', JSON.stringify(resp.partners)); cb && cb('data'); }
+        else cb && cb('empty');
+      } else cb && cb('error');
+    };
+    const s = document.createElement('script'); s.id = name;
+    s.src = CFG.storeUrl + (CFG.storeUrl.indexOf('?')>=0?'&':'?')
+      + 'action=partnersFull&key=' + encodeURIComponent(storeKey()) + '&callback=' + name + '&t=' + Date.now();
+    document.body.appendChild(s);
+  }
+  function storePushPartners(){
+    if(!CFG.storeUrl) return;
+    try{
+      fetch(CFG.storeUrl, {
+        method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ action:'savePartners', key: storeKey(), partners: effectivePartners() }), keepalive:true
+      }).catch(()=>{});
+    }catch(e){}
+  }
+  function setStoreStatus(txt, kind){
+    const el = $('#storeStatus'); if(!el) return;
+    el.textContent = txt;
+    el.style.color = kind==='ok' ? '#7fe3a3' : (kind==='err' ? '#f0b8ab' : 'rgba(255,255,255,.7)');
+  }
+  function syncStore(){
+    if(!CFG.storeUrl){ setStoreStatus('Armazém não configurado — usando só este navegador'); return; }
+    setStoreStatus('Sincronizando…');
+    let pending = 2, anyErr = false;
+    const done = () => { if(--pending<=0){ setStoreStatus(anyErr?'Falha ao conectar':'✓ Armazém conectado', anyErr?'err':'ok'); render(); } };
+    storeList((ok)=>{ if(!ok) anyErr = true; done(); });
+    storePartnersList((status)=>{
+      if(status==='error') anyErr = true;
+      else if(status==='empty') storePushPartners(); // semeia o armazém com os cupons atuais
+      done();
+    });
+  }
+
+  function inRange(dateStr){
+    const d = new Date(dateStr); if(isNaN(d)) return true;
+    const now = new Date();
+    if(range.mode==='all') return true;
+    if(range.mode==='today'){ return d.toDateString() === now.toDateString(); }
+    if(range.mode==='7'){ return d >= new Date(now.getTime()-7*864e5); }
+    if(range.mode==='30'){ return d >= new Date(now.getTime()-30*864e5); }
+    if(range.mode==='month'){ return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); }
+    if(range.mode==='custom'){
+      const okF = range.from ? d >= new Date(range.from+'T00:00') : true;
+      const okT = range.to ? d <= new Date(range.to+'T23:59') : true;
+      return okF && okT;
+    }
+    return true;
+  }
+  function leads(){ return allLeads().filter(l => inRange(l.createdAt)); }
+
+  // ---- render everything ----
+  function render(){
+    const L = leads();
+    renderOverview(L);
+    renderPartners(L);
+    renderFunnel(L);
+    renderRanking(L);
+    renderLeads(L);
+    renderPartnersManager();
+  }
+
+  function renderOverview(L){
+    const withCoupon = L.filter(l => l.couponValid).length;
+    const partnersActive = effectivePartners().filter(p => (p.status||'ativo').toLowerCase()==='ativo').length;
+    const scheduled = L.filter(l => SCHEDULED.has(l.status)).length;
+    const done = L.filter(l => DONE.has(l.status)).length;
+    const closed = L.filter(l => l.status==='TRATAMENTO FECHADO').length;
+    const paidLeads = L.filter(l => l.couponValid && DONE.has(l.status));
+    const benefits = paidLeads.reduce((s,l)=>s+(l.benefitValue||0),0);
+    const commissions = paidLeads.reduce((s,l)=>s+leadCommission(l),0);
+    const cards = [
+      {lbl:'Total de leads', val:L.length},
+      {lbl:'Leads com cupom', val:withCoupon, sub: L.length? Math.round(withCoupon/L.length*100)+'% do total':''},
+      {lbl:'Parceiros ativos', val:partnersActive},
+      {lbl:'Consultas agendadas', val:scheduled},
+      {lbl:'Consultas realizadas', val:done},
+      {lbl:'Tratamentos fechados', val:closed},
+      {lbl:'Desconto p/ pacientes', val:'R$ '+benefits, sub:'por consulta realizada'},
+      {lbl:'Comissão devida aos parceiros', val:'R$ '+commissions, sub:'por consulta realizada'}
+    ];
+    $('#overview').innerHTML = cards.map(c=>`
+      <div class="stat"><div class="lbl">${c.lbl}</div><div class="val">${c.val}</div>${c.sub?`<div class="sub">${c.sub}</div>`:''}</div>`).join('');
+  }
+
+  function partnerStats(L){
+    const map = {};
+    effectivePartners().forEach(p => { map[p.coupon] = {name:p.name, coupon:p.coupon, leads:0, sched:0, done:0, benefits:0, commission:0}; });
+    L.forEach(l => {
+      if(!l.couponValid || !l.coupon) return;
+      if(!map[l.coupon]) map[l.coupon] = {name:l.partnerName||l.coupon, coupon:l.coupon, leads:0, sched:0, done:0, benefits:0, commission:0};
+      const m = map[l.coupon];
+      m.leads++;
+      if(SCHEDULED.has(l.status)) m.sched++;
+      if(DONE.has(l.status)){ m.done++; m.benefits += (l.benefitValue||0); m.commission += leadCommission(l); }
+    });
+    return Object.values(map);
+  }
+
+  function pctClass(p){ return p>=50?'':p>=25?'mid':'low'; }
+
+  function renderPartners(L){
+    const rows = partnerStats(L).sort((a,b)=>b.leads-a.leads);
+    if(!rows.length){ $('#partnersBody').innerHTML = `<tr><td colspan="8"><div class="empty"><h3>Ainda sem leads com cupom</h3>Assim que um parceiro indicar, os números aparecem aqui.</div></td></tr>`; return; }
+    $('#partnersBody').innerHTML = rows.map(r => {
+      const a = r.leads?Math.round(r.sched/r.leads*100):0;
+      const c = r.leads?Math.round(r.done/r.leads*100):0;
+      return `<tr>
+        <td><div class="partner-name">${r.name}</div><div class="partner-coupon">${r.coupon}</div></td>
+        <td class="num">${r.leads}</td><td class="num">${r.sched}</td><td class="num">${r.done}</td>
+        <td><span class="pct ${pctClass(a)}">${a}%</span></td>
+        <td><span class="pct ${pctClass(c)}">${c}%</span></td>
+        <td class="money">R$ ${r.benefits}</td>
+        <td class="money" style="color:var(--gold)">R$ ${r.commission}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderFunnel(L){
+    const counts = STATUSES.map(s => ({s, n:L.filter(l=>l.status===s).length}));
+    const max = Math.max(1, ...counts.map(c=>c.n));
+    $('#funnel').innerHTML = counts.map(c=>`
+      <div class="fstage"><div class="fl">${c.s}</div>
+        <div class="fbar" style="width:${Math.max(6, c.n/max*100)}%">${c.n||''}</div>
+        <div class="fc">${c.n}</div></div>`).join('');
+  }
+
+  function renderRanking(L){
+    const rows = partnerStats(L);
+    const byLeads = [...rows].filter(r=>r.leads>0).sort((a,b)=>b.leads-a.leads).slice(0,8);
+    const byDone = [...rows].filter(r=>r.done>0).sort((a,b)=>b.done-a.done).slice(0,8);
+    $('#rankLeads').innerHTML = byLeads.length? byLeads.map((r,i)=>`<tr><td><span class="rank-num">${i+1}</span></td><td class="partner-name">${r.name}</td><td class="num">${r.leads}</td></tr>`).join('') : emptyRow(3);
+    $('#rankConsults').innerHTML = byDone.length? byDone.map((r,i)=>`<tr><td><span class="rank-num">${i+1}</span></td><td class="partner-name">${r.name}</td><td class="num">${r.done}</td></tr>`).join('') : emptyRow(3);
+  }
+  function emptyRow(cols){ return `<tr><td colspan="${cols}"><div class="empty small">Sem dados no período.</div></td></tr>`; }
+
+  function renderLeads(L){
+    const sorted = [...L].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+    if(!sorted.length){ $('#leadsBody').innerHTML = `<tr><td colspan="7"><div class="empty"><h3>Nenhum lead ainda</h3>Os cadastros da landing page aparecem aqui. Clique em “Dados de exemplo” para visualizar.</div></td></tr>`; return; }
+    $('#leadsBody').innerHTML = sorted.map(l=>{
+      const d = new Date(l.createdAt);
+      const date = isNaN(d)?'—':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      const opts = STATUSES.map(s=>`<option ${s===l.status?'selected':''}>${s}</option>`).join('');
+      let signals = '';
+      if(l.duplicateFlag) signals += `<span class="badge dup" title="${l.duplicateNote||''}">Duplicado</span> `;
+      if(l.coupon && !l.couponValid) signals += `<span class="badge novalid">Cupom inválido</span> `;
+      if(l.couponValid) signals += `<span class="badge cpn">R$${l.benefitValue}</span>`;
+      const cpn = l.couponValid? `<div class="partner-coupon">${l.coupon}</div><div class="small">${l.partnerName||''}</div>` : (l.coupon? `<div class="small">${l.coupon} (inválido)</div>` : '<div class="small">—</div>');
+      return `<tr>
+        <td class="small">${date}</td>
+        <td><span class="leadname">${l.name||'—'}</span></td>
+        <td class="small">${l.phone||'—'}</td>
+        <td class="small">${l.careLineLabel||'—'}</td>
+        <td>${cpn}</td>
+        <td><select class="status" onchange="Admin.setStatus('${l.leadId}', this.value)">${opts}</select></td>
+        <td>${signals||'<span class="small">—</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function toggleLeadForm(){
+    const f = $('#leadForm');
+    if(f.style.display !== 'none'){ f.style.display='none'; return; }
+    $('#lfCoupon').innerHTML = '<option value="">Sem cupom</option>' +
+      effectivePartners().map(p=>`<option value="${p.coupon}">${p.coupon} — ${p.name}</option>`).join('');
+    $('#lfStatus').innerHTML = STATUSES.map(s=>`<option>${s}</option>`).join('');
+    f.style.display='block';
+    $('#lfName').focus();
+  }
+  function saveManualLead(){
+    const name = $('#lfName').value.trim();
+    const phone = $('#lfPhone').value.trim();
+    if(!name || !phone){ alert('Informe pelo menos nome e WhatsApp.'); return; }
+    const coupon = $('#lfCoupon').value;
+    const p = coupon ? partnerByCoupon(coupon) : null;
+    const all = allLeads();
+    const digits = phone.replace(/\D/g,'');
+    const lead = {
+      leadId: 'MAN-' + Math.random().toString(36).slice(2,9).toUpperCase(),
+      status: $('#lfStatus').value || 'NOVO LEAD',
+      name, phone, phoneDigits: digits,
+      careLineLabel: $('#lfInterest').value.trim() || '—', careLineCount: 1,
+      coupon: p?p.coupon:'', couponValid: !!p, benefitValue: p?benefitOf(p):0, commissionValue: p?commissionOf(p):0,
+      partnerName: p?p.name:'', consent: true, origin: 'Cadastro manual',
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+      duplicateFlag: false, duplicateNote: ''
+    };
+    const same = all.filter(l => l.phoneDigits === digits);
+    if(same.length){ lead.duplicateFlag = true; lead.duplicateNote = 'Telefone já cadastrado'; }
+    all.push(lead); saveLeads(all); storePush(lead);
+    ['lfName','lfPhone','lfInterest'].forEach(id=>$('#'+id).value='');
+    $('#leadForm').style.display='none';
+    render();
+  }
+  function setStatus(id, status){
+    const all = allLeads();
+    const l = all.find(x=>x.leadId===id);
+    if(l){ l.status = status; l.updatedAt = new Date().toISOString(); saveLeads(all); storePush(l); render(); }
+  }
+
+  // ---- filters ----
+  function bindFilters(){
+    document.querySelectorAll('#filters .chip').forEach(ch=>{
+      ch.addEventListener('click', ()=>{
+        document.querySelectorAll('#filters .chip').forEach(c=>c.classList.remove('active'));
+        ch.classList.add('active');
+        range = {mode:ch.dataset.range, from:null, to:null};
+        render();
+      });
+    });
+  }
+  function customRange(){
+    const from=$('#dFrom').value, to=$('#dTo').value;
+    if(!from && !to) return;
+    document.querySelectorAll('#filters .chip').forEach(c=>c.classList.remove('active'));
+    range = {mode:'custom', from, to};
+    render();
+  }
+
+  function tab(name){
+    ['partners','funnel','ranking','leads','parceiros'].forEach(t=>{
+      $('#tab-'+t).classList.toggle('hidden', t!==name);
+    });
+    document.querySelectorAll('.tabbtns .chip').forEach(c=>c.classList.toggle('active', c.dataset.tab===name));
+    if(name==='parceiros') renderPartnersManager();
+  }
+
+  // ---- Partner manager ----
+  function partnerLink(p){
+    const base = (CFG.campaignBaseUrl||'').replace(/\/$/,'');
+    return base + '/?cupom=' + encodeURIComponent(p.coupon);
+  }
+  function renderPartnersManager(){
+    const list = effectivePartners();
+    const body = $('#pmBody'); if(!body) return;
+    if(!list.length){ body.innerHTML = `<tr><td colspan="7"><div class="empty small">Nenhum parceiro cadastrado. Adicione o primeiro no formulário acima.</div></td></tr>`; return; }
+    body.innerHTML = list.map((p,i)=>{
+      const active = (p.status||'ativo').toLowerCase()==='ativo';
+      const link = partnerLink(p);
+      return `<tr>
+        <td class="partner-name">${p.name||'—'}</td>
+        <td class="partner-coupon">${p.coupon}</td>
+        <td class="num">R$ ${benefitOf(p)}</td>
+        <td class="num" style="color:var(--gold)">R$ ${commissionOf(p)}</td>
+        <td><span class="st-badge ${active?'on':'off'}">${active?'Ativo':'Inativo'}</span></td>
+        <td><div class="pm-link"><input value="${link}" readonly onclick="this.select()"><button class="pm-copy" onclick="Admin.copyLink(this)" data-link="${link.replace(/"/g,'&quot;')}">Copiar</button></div></td>
+        <td style="white-space:nowrap">
+          <button class="pm-act" onclick="Admin.editPartner(${i})">Editar</button>
+          <button class="pm-act" onclick="Admin.togglePartner(${i})">${active?'Inativar':'Ativar'}</button>
+          <button class="pm-act del" onclick="Admin.removePartner(${i})">Remover</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+  function readPartnerForm(){
+    return {
+      name: $('#pName').value.trim(),
+      coupon: $('#pCoupon').value.trim().toUpperCase().replace(/\s+/g,''),
+      slug: $('#pSlug').value.trim().toLowerCase().replace(/\s+/g,''),
+      benefit: $('#pBenefit').value==='' ? (CFG.defaultBenefit||50) : +$('#pBenefit').value,
+      commission: $('#pCommission').value==='' ? (CFG.partnerCommission||100) : +$('#pCommission').value,
+      status: $('#pStatus').value, expires: null, maxUses: null
+    };
+  }
+  function savePartner(){
+    const p = readPartnerForm();
+    if(!p.name){ alert('Informe o nome do parceiro.'); return; }
+    if(!p.coupon){ alert('Informe o cupom.'); return; }
+    const list = effectivePartners();
+    const editIndex = +$('#pEditIndex').value;
+    const dupe = list.findIndex((x,idx)=> (x.coupon||'').toUpperCase()===p.coupon && idx!==editIndex);
+    if(dupe>=0){ alert('Já existe um parceiro com o cupom '+p.coupon+'.'); return; }
+    if(editIndex>=0) list[editIndex] = {...list[editIndex], ...p}; else list.push(p);
+    savePartners(list); storePushPartners(); clearPartnerForm(); render();
+  }
+  function editPartner(i){
+    const p = effectivePartners()[i]; if(!p) return;
+    $('#pEditIndex').value = i;
+    $('#pName').value = p.name||''; $('#pCoupon').value = p.coupon||''; $('#pSlug').value = p.slug||'';
+    $('#pBenefit').value = (p.benefit!=null?p.benefit:''); $('#pCommission').value = (p.commission!=null?p.commission:'');
+    $('#pStatus').value = (p.status||'ativo');
+    $('#pSaveBtn').textContent = 'Salvar alterações'; $('#pCancelBtn').style.display='inline-block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function clearPartnerForm(){
+    $('#pEditIndex').value = -1;
+    ['pName','pCoupon','pSlug','pBenefit','pCommission'].forEach(id=>$('#'+id).value='');
+    $('#pStatus').value='ativo';
+    $('#pSaveBtn').textContent='Adicionar parceiro'; $('#pCancelBtn').style.display='none';
+  }
+  function togglePartner(i){
+    const list = effectivePartners(); if(!list[i]) return;
+    list[i].status = (list[i].status||'ativo').toLowerCase()==='ativo' ? 'inativo' : 'ativo';
+    savePartners(list); storePushPartners(); render();
+  }
+  function removePartner(i){
+    const list = effectivePartners(); if(!list[i]) return;
+    if(!confirm('Remover o parceiro "'+(list[i].name||list[i].coupon)+'"? Você pode restaurar o padrão depois.')) return;
+    list.splice(i,1); savePartners(list); storePushPartners(); render();
+  }
+  function copyLink(btn){
+    const link = btn.getAttribute('data-link');
+    navigator.clipboard.writeText(link).then(()=>{ const t=btn.textContent; btn.textContent='Copiado!'; setTimeout(()=>btn.textContent=t,1200); });
+  }
+  function resetPartners(){
+    if(!confirm('Restaurar a lista de parceiros para o padrão do arquivo config.js? Suas alterações locais serão descartadas.')) return;
+    localStorage.removeItem('blues_partners'); storePushPartners(); clearPartnerForm(); render();
+  }
+  function exportConfig(){
+    const list = effectivePartners().map(p=>({
+      coupon:(p.coupon||'').toUpperCase(), slug:p.slug||'', name:p.name||'',
+      status:(p.status||'ativo'), benefit:benefitOf(p), commission:commissionOf(p),
+      expires:p.expires||null, maxUses:p.maxUses||null
+    }));
+    const cfg = {...CFG, partners:list};
+    const js = '/* Clínica Blues — config.js (gerado pelo painel) */\n'
+      + 'window.BLUES_CONFIG = ' + JSON.stringify(cfg, null, 2) + ';\n';
+    const blob = new Blob([js], {type:'text/javascript;charset=utf-8'});
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='config.js'; a.click();
+  }
+
+  // ---- import / export / demo ----
+  function exportCSV(){
+    const L = leads();
+    const cols = ['leadId','createdAt','status','name','phone','careLineLabel','coupon','couponValid','benefitValue','partnerName','utm_source','utm_medium','utm_campaign','duplicateFlag','duplicateNote'];
+    const head = cols.join(',');
+    const body = L.map(l => cols.map(c => {
+      let v = l[c]==null?'':String(l[c]).replace(/"/g,'""');
+      return /[",\n]/.test(v)?`"${v}"`:v;
+    }).join(',')).join('\n');
+    const blob = new Blob([head+'\n'+body], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'leads-blues.csv';
+    a.click();
+  }
+  function importJSON(){
+    const inp = document.createElement('input');
+    inp.type='file'; inp.accept='.json,application/json';
+    inp.onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try{
+          const data = JSON.parse(r.result);
+          const arr = Array.isArray(data)?data:[data];
+          const all = allLeads();
+          arr.forEach(l => { if(l.leadId && !all.find(x=>x.leadId===l.leadId)) all.push(l); });
+          saveLeads(all); render();
+          alert(arr.length+' registro(s) importado(s).');
+        }catch(err){ alert('Arquivo inválido: '+err.message); }
+      };
+      r.readAsText(f);
+    };
+    inp.click();
+  }
+  function loadDemo(){
+    if(!confirm('Carregar leads de exemplo para visualizar o painel? (não apaga os leads reais)')) return;
+    const names=['Ana Paula','Carlos Dias','Juliana Reis','Marcos Vieira','Beatriz Nunes','Rafael Gomes','Larissa Melo','Tiago Alves','Fernanda Sá','Pedro Rocha','Camila Luz','Bruno Faria'];
+    const cares=(CFG.careLines||[]).map(c=>({id:c.id,label:c.label}));
+    const partners=effectivePartners();
+    const st=STATUSES;
+    const all=allLeads();
+    for(let i=0;i<24;i++){
+      const useC = i%3!==0 && partners.length;
+      const p = useC? partners[i%partners.length]:null;
+      const care = cares[i%cares.length];
+      const daysAgo = i%29;
+      const dt = new Date(Date.now()-daysAgo*864e5-(i*37*60000));
+      const stg = st[Math.min(st.length-1, Math.floor((i*7)%9))];
+      all.push({
+        leadId:'DEMO-'+i+'-'+Math.random().toString(36).slice(2,6),
+        status: stg==='PERDIDO'&&i%5? st[i%6]:stg,
+        name:names[i%names.length], phone:'(31) 9'+(8000+i)+'-'+(1000+i), phoneDigits:'319'+(8000+i)+(1000+i),
+        careLine:care.id, careLineLabel:care.label,
+        coupon: p?p.coupon:'', couponValid:!!p, benefitValue:p?benefitOf(p):0, commissionValue:p?commissionOf(p):0,
+        partnerName:p?p.name:'', consent:true,
+        utm_source:i%2?'instagram':'whatsapp', utm_medium:'social', utm_campaign:'nova-era',
+        origin:'Landing Page Blues', createdAt:dt.toISOString(), updatedAt:dt.toISOString(),
+        duplicateFlag:i===7, duplicateNote:i===7?'Telefone já cadastrado anteriormente':''
+      });
+    }
+    saveLeads(all); render();
+  }
+
+  // ---- Login gate (camada de conveniência; a proteção forte é no servidor) ----
+  const ADMIN_HASH = '6434cf147bba804d615494b583f33f35a13a0e3a4a7b39ba39927e85660e70d4';
+  let booted = false;
+  async function sha256(str){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  async function login(){
+    const email = ($('#lgEmail').value||'').trim().toLowerCase();
+    const pass = $('#lgPass').value||'';
+    let h = '';
+    try{ h = await sha256(email + ':' + pass); }catch(e){ h=''; }
+    if(h === ADMIN_HASH){
+      sessionStorage.setItem('blues_admin_auth', ADMIN_HASH);
+      sessionStorage.setItem('blues_store_key', pass); // chave do armazém = senha do painel
+      unlock();
+    } else {
+      $('#loginErr').style.display='block';
+      $('#lgPass').value='';
+      $('#lgPass').focus();
+    }
+  }
+  function unlock(){
+    document.body.classList.remove('locked');
+    if(!booted){ booted = true; bindFilters(); tab('partners'); render(); if(CFG.storeUrl) syncStore(); else setStoreStatus(''); }
+  }
+  function logout(){
+    sessionStorage.removeItem('blues_admin_auth');
+    sessionStorage.removeItem('blues_store_key');
+    location.reload();
+  }
+  function init(){
+    if(sessionStorage.getItem('blues_admin_auth') === ADMIN_HASH){ unlock(); }
+    else { document.body.classList.add('locked'); setTimeout(()=>{ const e=$('#lgEmail'); if(e) e.focus(); }, 100); }
+  }
+  document.addEventListener('DOMContentLoaded', init);
+  return { render, setStatus, customRange, tab, exportCSV, importJSON, loadDemo,
+           savePartner, editPartner, clearPartnerForm, togglePartner, removePartner, copyLink, resetPartners, exportConfig,
+           toggleLeadForm, saveManualLead, syncStore, login, logout };
+})();
+</script>
+</body>
+</html>
