@@ -360,9 +360,11 @@ const Admin = (() => {
   function partnerByCoupon(c){ if(!c) return null; return effectivePartners().find(p=>(p.coupon||'').toUpperCase()===String(c).toUpperCase())||null; }
   function leadCommission(l){
     if(!l.couponValid) return 0;
-    if(l.commissionValue != null && l.commissionValue !== '') return +l.commissionValue;
+    // Fonte da verdade = comissão ATUAL do parceiro (a landing não recebe esse valor).
     const p = partnerByCoupon(l.coupon);
-    return p ? commissionOf(p) : COMMISSION;
+    if(p) return commissionOf(p);
+    if(l.commissionValue != null && l.commissionValue !== '') return +l.commissionValue;
+    return COMMISSION;
   }
 
   // ---- Armazém central (Google Sheets via Apps Script) ----
