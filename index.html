@@ -417,7 +417,14 @@ const Blues = (() => {
   }
   let STORE_PARTNERS = null;
   function effectivePartners(){
+    // 1º: armazém central (online, vale em qualquer dispositivo)
     if(Array.isArray(STORE_PARTNERS) && STORE_PARTNERS.length) return STORE_PARTNERS;
+    // 2º: ponte local (cupom criado no painel no MESMO navegador/domínio, ex.: /admin)
+    try{
+      const ov = JSON.parse(localStorage.getItem('blues_partners')||'null');
+      if(Array.isArray(ov) && ov.length) return ov;
+    }catch(e){}
+    // 3º: config.js
     return CFG.partners || [];
   }
   // Lê os cupons do armazém central (assim, cupom criado no painel vale aqui na hora).

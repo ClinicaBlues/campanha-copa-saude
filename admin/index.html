@@ -263,8 +263,9 @@ body.locked > header, body.locked > .wrap, body.locked > footer{display:none}
   <section id="tab-leads" class="hidden">
     <div class="sec-h"><h2>Leads <span class="g">recebidos</span></h2><span class="note">Atualize o status de cada lead conforme avança no atendimento</span></div>
 
-    <div style="margin-bottom:14px">
+    <div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-navy btn-sm" onclick="Admin.toggleLeadForm()">＋ Adicionar lead manualmente</button>
+      <button class="btn btn-ghost-dark btn-sm" onclick="Admin.clearAllLeads()">🗑 Limpar todos os leads</button>
     </div>
     <div class="partner-form" id="leadForm" style="display:none;margin-bottom:16px">
       <div class="pf-grid">
@@ -282,7 +283,7 @@ body.locked > header, body.locked > .wrap, body.locked > footer{display:none}
 
     <div class="tablewrap scroll">
       <table>
-        <thead><tr><th>Data</th><th>Nome</th><th>WhatsApp</th><th>Interesse</th><th>Cupom / Parceiro</th><th>Status</th><th>Sinais</th></tr></thead>
+        <thead><tr><th>Data</th><th>Nome</th><th>WhatsApp</th><th>Interesse</th><th>Cupom / Parceiro</th><th>Status</th><th>Sinais</th><th></th></tr></thead>
         <tbody id="leadsBody"></tbody>
       </table>
     </div>
@@ -552,7 +553,7 @@ const Admin = (() => {
 
   function renderLeads(L){
     const sorted = [...L].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
-    if(!sorted.length){ $('#leadsBody').innerHTML = `<tr><td colspan="7"><div class="empty"><h3>Nenhum lead ainda</h3>Os cadastros da landing page aparecem aqui. Clique em “Dados de exemplo” para visualizar.</div></td></tr>`; return; }
+    if(!sorted.length){ $('#leadsBody').innerHTML = `<tr><td colspan="8"><div class="empty"><h3>Nenhum lead ainda</h3>Os cadastros da landing page aparecem aqui. Clique em “Dados de exemplo” para visualizar.</div></td></tr>`; return; }
     $('#leadsBody').innerHTML = sorted.map(l=>{
       const d = new Date(l.createdAt);
       const date = isNaN(d)?'—':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
@@ -570,6 +571,7 @@ const Admin = (() => {
         <td>${cpn}</td>
         <td><select class="status" onchange="Admin.setStatus('${l.leadId}', this.value)">${opts}</select></td>
         <td>${signals||'<span class="small">—</span>'}</td>
+        <td><button class="pm-act del" onclick="Admin.deleteLead('${l.leadId}')">Excluir</button></td>
       </tr>`;
     }).join('');
   }
@@ -606,6 +608,39 @@ const Admin = (() => {
     all.push(lead); saveLeads(all); storePush(lead);
     ['lfName','lfPhone','lfInterest'].forEach(id=>$('#'+id).value='');
     $('#leadForm').style.display='none';
+    render();
+  }
+  function storeDeleteLead(id){
+    if(!CFG.storeUrl) return;
+    try{
+      fetch(CFG.storeUrl, {
+        method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({ action:'deleteLead', key: storeKey(), leadId: id }), keepalive:true
+      }).catch(()=>{});
+    }catch(e){}
+  }
+  function deleteLead(id){
+    const all = allLeads();
+    const l = all.find(x=>x.leadId===id);
+    if(!l) return;
+    if(!confirm('Excluir o lead de "'+(l.name||id)+'"? Esta ação não pode ser desfeita.')) return;
+    saveLeads(all.filter(x=>x.leadId!==id));
+    storeDeleteLead(id);
+    render();
+  }
+  function clearAllLeads(){
+    const n = allLeads().length;
+    if(!n){ alert('Não há leads para remover.'); return; }
+    if(!confirm('Remover TODOS os '+n+' leads deste painel? Esta ação não pode ser desfeita.')) return;
+    saveLeads([]);
+    if(CFG.storeUrl){
+      try{
+        fetch(CFG.storeUrl, {
+          method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({ action:'clearLeads', key: storeKey() }), keepalive:true
+        }).catch(()=>{});
+      }catch(e){}
+    }
     render();
   }
   function setStatus(id, status){
@@ -837,7 +872,7 @@ const Admin = (() => {
   document.addEventListener('DOMContentLoaded', init);
   return { render, setStatus, customRange, tab, exportCSV, importJSON, loadDemo,
            savePartner, editPartner, clearPartnerForm, togglePartner, removePartner, copyLink, resetPartners, exportConfig,
-           toggleLeadForm, saveManualLead, syncStore, login, logout };
+           toggleLeadForm, saveManualLead, deleteLead, clearAllLeads, syncStore, login, logout };
 })();
 </script>
 </body>
