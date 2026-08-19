@@ -22,7 +22,7 @@ window.BLUES_CONFIG = {
 
   // ARMAZÉM CENTRAL (Google Sheets via Apps Script). Cole aqui a URL /exec.
   // Enquanto vazio, o site funciona normal e o painel usa só o navegador.
-  storeUrl: "",
+  storeUrl: "https://script.google.com/macros/s/AKfycby9IWx93KUdyfGjmz2WO11pssI6NZvLuRU6KaiIGN2beAPjn-CTipoBdbDmDeREFdJWUw/exec",
   // Chave pública de escrita (deve ser igual ao WRITE_KEY do Code.gs).
   storeWriteKey: "blues-site-2026",
 
